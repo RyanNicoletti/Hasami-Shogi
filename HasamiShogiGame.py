@@ -94,7 +94,7 @@ class HasamiShogiGame:
     def get_square_occupant(self, square):
         board = self.get_board()
         row = self._row_map[square[0]]
-        col = int(square[1])
+        col = int(square[1])-1
         if board[row][col] == 'R':
             return "RED"
         elif board[row][col] == 'B':
@@ -333,8 +333,6 @@ class HasamiShogiGame:
         return
 
 
-# game = HasamiShogiGame()
-# move_result = game.make_move('i6', 'e3')
-# print(game.get_active_player())
-# print(game.get_square_occupant('a4'))
-# print(game.get_game_state())
+game = HasamiShogiGame()
+print(game.get_square_occupant('a9'))
+
