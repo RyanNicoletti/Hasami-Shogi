@@ -333,6 +333,6 @@ class HasamiShogiGame:
         return
 
 
-game = HasamiShogiGame()
-print(game.get_square_occupant('a9'))
+# game = HasamiShogiGame()
+# print(game.get_square_occupant('a9'))
 
