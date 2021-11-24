@@ -168,6 +168,9 @@ class HasamiShogiGame:
             board[end_row_num][end_col_num] = 'B' if active_player == 'BLACK' else 'R'
             board[start_row_num][start_col_num] = '.'
         self.check_capture_helper(end_row_num, end_col_num)
+        self.change_turn()
+        self.check_for_win()
+        return True
 
     def check_capture_helper(self, row, col):
         """
@@ -205,9 +208,9 @@ class HasamiShogiGame:
             self.rec_check_captures(row - 1, col, 'right')
             self.rec_check_captures(row - 1, col, 'left')
 
-        self.change_turn()
-        self.check_for_win()
-        return True
+        # self.change_turn()
+        # self.check_for_win()
+        # return True
 
     def rec_check_captures(self, row, col, direction):
 
@@ -330,4 +333,8 @@ class HasamiShogiGame:
         return
 
 
-
+game = HasamiShogiGame()
+move_result = game.make_move('i6', 'e3')
+print(game.get_active_player())
+print(game.get_square_occupant('a4'))
+print(game.get_game_state())
