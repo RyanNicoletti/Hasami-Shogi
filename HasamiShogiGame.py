@@ -1,30 +1,24 @@
-# Author: Ryan Nicoletti
-# Date: 11/19/2021
-# Description: Hasami Shogi Game in Python
+import pygame as pg
+from constants import RED, BLACK, BLUE, SQUARE_SIZE
+from board import Board
+from piece import Piece
 
-class HasamiShogiGame:
+
+class Hasamishogigame:
     """
     represents the board game hasami shogi
     """
 
-    def __init__(self):
+    def __init__(self, win):
         """
         Creates a new instance of the hasami shogi game with a new board.
         Initializes current player as black and opposing player as red (black goes first).
         Initializes captured pieces (count) to 0 for both players
         """
-        self._board = [["R" for pawn in range(9)], ['.' for space in range(9)], ['.' for space in range(9)],
-                       ['.' for space in range(9)], ['.' for space in range(9)], ['.' for space in range(9)],
-                       ['.' for space in range(9)], ['.' for space in range(9)], ["B" for pawn in range(9)]]
-        self._row_map = {'a': 0,
-                         'b': 1,
-                         'c': 2,
-                         'd': 3,
-                         'e': 4,
-                         'f': 5,
-                         'g': 6,
-                         'h': 7,
-                         'i': 8}
+        self._init()
+
+        self.win = win
+        self.store_pos = []
         self._active_player = 'BLACK'
         self._curr_player_turn = 'B'
         self._opponent = 'R'
@@ -32,154 +26,94 @@ class HasamiShogiGame:
         self._red_count = 0
         self._black_count = 0
 
-    def get_board(self):
-        # returns the current state of the board
-        return self._board
+    def _init(self):
+        self.selected = None
+        self.board = Board()
+        self.active_player = BLACK
+        self.opponent = RED if self.active_player == BLACK else BLACK
+        self.valid_moves = {}
 
-    def print_board(self,):
-        # prints the current state of the board to the console
-        board = self.get_board()
-        for row in board:
-            for cell in row:
-                print(cell, end=' ')
-            print()
-
-    def set_active_player(self, color):
-        """
-        takes as a string the color of a player and makes that player
-        the active player
-        """
-        self._active_player = color
-        self._opponent = 'B' if self._opponent == 'R' else 'R'
-
-    def set_curr_player_turn(self):
-        # sets an abbreviation of the current active player
-        self._curr_player_turn = 'R'if self.get_active_player() == "RED" else 'B'
-
-    def get_curr_player_turn(self):
-        # returns the abbreviation "B" or "R" for the current active player
-        return self._curr_player_turn
-
-    def set_opponent(self):
-        # sets the current opposing player to a string
-        self._opponent = 'B' if self.get_active_player() == 'RED' else 'R'
-
-    def get_opponent(self):
-        # returns a string, representing the opposing player
-        return self._opponent
+    def update(self):
+        self.board.draw(self.win)
+        self.draw_valid_moves(self.valid_moves)
+        pg.display.update()
 
     def inc_captured_pieces(self):
         """
         increases the number of the current opponents captured pieces by one
         """
-        if self._opponent == 'R':
+        if self.opponent == RED:
             self._red_count += 1
         else:
             self._black_count += 1
-
-    def get_op_count(self):
-        # returns an integer, the number of the opponents captured pieces
-        return self._red_count if self._opponent == 'R' else self._black_count
-
-    def get_num_captured_pieces(self, player):
-        """
-        takes as a string, the player whos number of captured pieces youd like to see;
-        returns and integer, the number of captured pieces of that player
-        """
-        return self._red_count if player == "RED" else self._black_count
 
     def change_turn(self):
         """
         changes the current active player to the opposite color
         and changes the opponent to the opposite color
         """
-        if self.get_active_player() == 'BLACK':
-            self.set_active_player('RED')
-            self.set_opponent()
-            self.set_curr_player_turn()
+        self.valid_moves = {}
+        if self.active_player == BLACK:
+            self.active_player = RED
         else:
-            self.set_active_player('BLACK')
-            self.set_opponent()
-            self.set_curr_player_turn()
-
-    def get_active_player(self):
-        # returns the current active player, a string, either red or black
-        return self._active_player
+            self.active_player = BLACK
 
     def set_game_state(self, winner):
         """
-        takes 'RED_WON' or 'BLACK_WON' a param and
-        sets winner of the game to red or black
+        TODO sets game state
         """
-        self._game_state = winner
-
+        pass
     def get_game_state(self):
-        """returns the current state of the game as a string,
-        either red won, black won or unfinished if there is no
-        current winner
+        """TODO returns game state
         """
-        return self._game_state
-
-    def get_square_occupant(self, square):
-        """
-        takes a string that contains a position on the board,
-        parses the string into a row and column on the board
-        returns what color player occupies that space or 'NONE'
-        if it is unoccupied
-        """
-        board = self.get_board()
-        row = self._row_map[square[0]]
-        col = int(square[1])-1
-        if board[row][col] == 'R':
-            return "RED"
-        elif board[row][col] == 'B':
-            return "BLACK"
-        else:
-            return 'NONE'
+        pass
 
     def check_for_win(self):
         """
-        checks to see if a current player has captured all or all
-        but one of the opposing players pieces, if so, updates
-        current state of the game accordingly
+        TODO checks for winner
         """
-        opponent = 'RED' if self.get_opponent() == 'R' else 'BLACK'
-        if self.get_num_captured_pieces(opponent) >= 8:
-            self.set_game_state("BLACK_WON") if opponent == 'RED' else self.set_game_state("RED_WON")
-        return
+        pass
 
-    def make_move(self, start_pos, end_pos):
-        """
-        takes two strings, the starting position on the board, and the end position
-        on the board of where the current player would like to move their pawn.
-        The start and end position are parsed into start row and column and end
-        row and column on the board.
-        If the start position is in an empty space, or the opponents space, return false.
-        If the end position if off the board, return false.
-        If there is any movement other than horizontal or verticle, return false.
-        If the game has already been won, return false.
-        Else: check which direction the pawn is moving, and make sure there are no
-        other pawns in the way from the start point to the end point.
-        If the path is clear, update the board so that the start point is clear and the end
-        point contains the players pawn.
-        Then calls a function to check for opportunity to capture opponent pieces
-        """
-        start_row_num = self._row_map[start_pos[0]]
-        start_col_num = int(start_pos[1]) - 1        # align column to 0 indexed array
-        end_row_num = self._row_map[end_pos[0]]
-        end_col_num = int(end_pos[1]) - 1            # align column to 0 indexed array
+    def select_move(self, row, col):
+        piece = self.board.get_piece(row, col)
+        if piece != 0 and piece.color == self.active_player:
+            self.store_pos = [(row, col)]
+            self.selected = None
+        else:
+            self.store_pos.append((row, col))
+        if self.selected:
+            start_row_num = self.store_pos[0][0]
+            start_col_num = self.store_pos[0][1]
+            end_row_num = self.store_pos[1][0]
+            end_col_num = self.store_pos[1][1]
+            result = self.make_move(start_row_num, start_col_num, end_row_num, end_col_num)
+            if not result or (piece != 0 and piece.color != self.active_player):
+                if self.store_pos:
+                    del self.store_pos[-1]
+            else:
+                self.selected = None
+                self.store_pos.clear()
 
-        board = self.get_board()
+        if piece != 0 and piece.color == self.active_player:
+            self.selected = piece
+            self.valid_moves = self.board.get_valid_moves(piece)
 
-        active_player = self.get_active_player()
+            return True
+        return False
+
+    def draw_valid_moves(self, moves):
+        for move in moves:
+            row, col = move
+            pg.draw.circle(self.win, BLUE,
+                           (col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2), 15)
+
+    def make_move(self, start_row_num, start_col_num, end_row_num, end_col_num):
+
+        board = self.board.get_board()
 
         game_sate = self.get_game_state()
 
-        # if starting at wrong players pawn, return false
-        if (board[start_row_num][start_col_num] == 'B' and active_player == 'RED') or \
-                (board[start_row_num][start_col_num] == 'R' and active_player == 'BLACK') or \
-                board[start_row_num][start_col_num] == '.':
-            return False
+        piece_to_move = self.board.get_piece(start_row_num, start_col_num)
 
         # if the end position is off the board, return False
         if end_row_num < 0 or end_row_num > 8 or end_col_num < 0 or end_col_num > 8:
@@ -196,42 +130,37 @@ class HasamiShogiGame:
         if start_row_num > end_row_num:
             # move up
             start_pos = end_row_num
-            for i in reversed(range(start_row_num-end_row_num)):
-                if board[i+start_pos][start_col_num] != '.':
+            for i in reversed(range(start_row_num - end_row_num)):
+                if board[i + start_pos][start_col_num] != 0:
                     return False
-            board[end_row_num][end_col_num] = 'B' if active_player == 'BLACK' else 'R'
-            board[start_row_num][start_col_num] = '.'
 
         if end_row_num > start_row_num:
             # move down
-            start_pos = start_row_num+1
-            for i in range(end_row_num-start_row_num):
-                if board[i + start_pos][start_col_num] != '.':
+            start_pos = start_row_num + 1
+            for i in range(end_row_num - start_row_num):
+                if board[i + start_pos][start_col_num] != 0:
                     return False
-            board[end_row_num][end_col_num] = 'B' if active_player == 'BLACK' else 'R'
-            board[start_row_num][start_col_num] = '.'
 
         if end_col_num > start_col_num:
             # move right
             start_pos = start_col_num + 1
-            for i in range(end_col_num-start_col_num):
-                if board[start_row_num][i+start_pos] != '.':
+            for i in range(end_col_num - start_col_num):
+                if board[start_row_num][i + start_pos] != 0:
                     return False
-            board[end_row_num][end_col_num] = 'B' if active_player == 'BLACK' else 'R'
-            board[start_row_num][start_col_num] = '.'
 
         if start_col_num > end_col_num:
             # move left
             start_pos = end_col_num
-            for i in reversed(range(start_col_num-end_col_num)):
-                if board[start_row_num][i + start_pos] != '.':
+            for i in reversed(range(start_col_num - end_col_num)):
+                if board[start_row_num][i + start_pos] != 0:
                     return False
-            board[end_row_num][end_col_num] = 'B' if active_player == 'BLACK' else 'R'
-            board[start_row_num][start_col_num] = '.'
+
+        board[end_row_num][end_col_num] = Piece(end_row_num, end_col_num, self.active_player)
+        board[start_row_num][start_col_num] = 0
 
         self.check_capture_helper(end_row_num, end_col_num)
-        self.change_turn()
         self.check_for_win()
+        self.change_turn()
         return True
 
     def check_capture_helper(self, row, col):
@@ -243,35 +172,35 @@ class HasamiShogiGame:
         to be potentially captured.
         Accounts for cases where the pawn is captured in the corner of the board
         """
-        board = self.get_board()
+        board = self.board.get_board()
 
-        opponent = self.get_opponent()
+        opponent = self.opponent
 
-        if row < 8 and board[row + 1][col] == opponent:
-            self.rec_check_captures(row+1, col, 'down')
+        if row < 8 and board[row + 1][col] == self.board.get_piece(row+1, col):
+            self.rec_check_captures(row + 1, col, 'down')
 
-        if row > 1 and board[row - 1][col] == opponent:
-            self.rec_check_captures(row-1, col, 'up')
+        if row > 1 and board[row - 1][col] == self.board.get_piece(row-1, col):
+            self.rec_check_captures(row - 1, col, 'up')
 
-        if col < 8 and board[row][col + 1] == opponent:
-            self.rec_check_captures(row, col+1, 'right')
+        if col < 8 and board[row][col + 1] == self.board.get_piece(row, col+1):
+            self.rec_check_captures(row, col + 1, 'right')
 
-        if col > 1 and board[row][col - 1] == opponent:
-            self.rec_check_captures(row, col-1, 'left')
+        if col > 1 and board[row][col - 1] == self.board.get_piece(row, col-1):
+            self.rec_check_captures(row, col - 1, 'left')
 
-        if row == 1 and board[row-1][col] == opponent:
-            self.rec_check_captures(row-1, col, 'right')
+        if row == 1 and board[row - 1][col] == self.board.get_piece(row-1, col):
+            self.rec_check_captures(row - 1, col, 'right')
             self.rec_check_captures(row - 1, col, 'left')
 
-        if col == 7 and board[row][col+1] == opponent:
-            self.rec_check_captures(row, col+1, 'down')
+        if col == 7 and board[row][col + 1] == self.board.get_piece(row, col+1):
+            self.rec_check_captures(row, col + 1, 'down')
             self.rec_check_captures(row, col + 1, 'up')
 
-        if col == 1 and board[row][col-1] == opponent:
-            self.rec_check_captures(row, col-1, 'down')
+        if col == 1 and board[row][col - 1] == self.board.get_piece(row, col-1):
+            self.rec_check_captures(row, col - 1, 'down')
             self.rec_check_captures(row, col - 1, 'up')
 
-        if row == 7 and board[row+1][col] == opponent:
+        if row == 7 and board[row + 1][col] == self.board.get_piece(row+1, col):
             self.rec_check_captures(row - 1, col, 'right')
             self.rec_check_captures(row - 1, col, 'left')
         return
@@ -287,58 +216,61 @@ class HasamiShogiGame:
         Otherwise return.
         """
 
-        board = self.get_board()
-        opponent = self.get_opponent()
-        player = self.get_curr_player_turn()
+        board = self.board.get_board()
+        opponent = self.opponent
 
         if direction == 'down':
             # top right corner
-            if row == 0 and col == 8 and board[row+1][col] == player:
-                board[row][col] = '.'
+            if row == 0 and col == 8 and Piece(row+1, col, self.active_player): #board[row + 1][col] == player:
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # top left corner
-            if row == 0 and col == 0 and board[row+1][col] == player:
-                board[row][col] = '.'
+            if row == 0 and col == 0 and Piece(row+1, col, self.active_player): #board[row + 1][col] == player:
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
 
-            if row+1 > 8 or board[row+1][col] == '.':
+            if row + 1 > 8 or board[row + 1][col] == 0:
                 return
 
-            if board[row+1][col] == player:
+            piece = self.board.get_piece(row + 1, col)
+            if piece.color == self.active_player:
                 remove_pieces = True
                 while remove_pieces:
-                    if board[row][col] == player:
+                    piece = self.board.get_piece(row, col)
+                    if piece != 0 and piece.color == self.active_player:
                         break
-                    board[row][col] = '.'
+                    board[row][col] = 0
                     self.inc_captured_pieces()
                     row -= 1
                 return
 
-            return self.rec_check_captures(row+1, col, 'down')
+            return self.rec_check_captures(row + 1, col, 'down')
 
         if direction == 'up':
             # bottom right corner
-            if row == 8 and col == 8 and board[row - 1][col] == player:
-                board[row][col] = '.'
+            if row == 8 and col == 8 and Piece(row-1, col, self.active_player):
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # bottom left corner
-            if row == 8 and col == 0 and board[row - 1][col] == player:
-                board[row][col] = '.'
+            if row == 8 and col == 0 and Piece(row-1, col, self.active_player):
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
 
-            if row-1 < 0 or board[row - 1][col] == '.':
+            if row - 1 < 0 or board[row - 1][col] == 0:
                 return
 
-            if board[row - 1][col] == player:
+            piece = self.board.get_piece(row-1, col)
+            if piece.color == self.active_player:
                 remove_pieces = True
                 while remove_pieces:
-                    if board[row][col] == player:
+                    piece = self.board.get_piece(row, col)
+                    if piece != 0 and piece.color == self.active_player:
                         break
-                    board[row][col] = '.'
+                    board[row][col] = 0
                     self.inc_captured_pieces()
                     row += 1
                 return
@@ -347,56 +279,66 @@ class HasamiShogiGame:
 
         if direction == 'right':
             # top left corner
-            if row == 0 and col == 0 and board[row][col+1] == player:
-                board[row][col] = '.'
+            if row == 0 and col == 0 and Piece(row, col+1, self.active_player):
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # bottom left corner
-            if row == 8 and col == 0 and board[row][col+1] == player:
-                board[row][col] = '.'
+            if row == 8 and col == 0 and Piece(row, col+1, self.active_player):
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
 
-            if col+1 > 8 or board[row][col+1] == '.':
+            if col + 1 > 8 or board[row][col + 1] == 0:
                 return
 
-            if board[row][col+1] == player:
+            piece = self.board.get_piece(row, col+1)
+            if piece.color == self.active_player:
                 remove_pieces = True
                 while remove_pieces:
-                    if board[row][col] == player:
+                    piece = self.board.get_piece(row, col)
+                    if piece != 0 and piece.color == self.active_player:
                         break
-                    board[row][col] = '.'
+                    board[row][col] = 0
                     self.inc_captured_pieces()
                     col -= 1
                 return
 
-            return self.rec_check_captures(row, col+1, 'right')
+            return self.rec_check_captures(row, col + 1, 'right')
 
         if direction == 'left':
             # top right corner
-            if row == 0 and col == 8 and board[row][col-1] == player:
-                board[row][col] = '.'
+            if row == 0 and col == 8 and Piece(row, col-1, self.active_player):
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # bottom right corner
-            if row == 8 and col == 8 and board[row][col-1] == player:
-                board[row][col] = '.'
+            if row == 8 and col == 8 and Piece(row, col-1, self.active_player):
+                board[row][col] = 0
                 self.inc_captured_pieces()
                 return
 
-            if col-1 < 0 or board[row][col-1] == '.':
+            if col - 1 < 0 or board[row][col - 1] == 0:
                 return
 
-            if board[row][col-1] == player:
+            piece = self.board.get_piece(row, col - 1)
+            if piece.color == self.active_player: #board[row][col - 1] == player:
                 remove_pieces = True
                 while remove_pieces:
-                    if board[row][col] == player:
+                    piece = self.board.get_piece(row, col)
+                    if piece != 0 and piece.color == self.active_player: #board[row][col] == player:
                         break
-                    board[row][col] = '.'
+                    board[row][col] = 0
                     self.inc_captured_pieces()
                     col += 1
                 return
 
-            return self.rec_check_captures(row, col-1, 'left')
+            return self.rec_check_captures(row, col - 1, 'left')
 
-
+# game = HasamiShogiGame()
+# game.make_move('i1', 'c1')
+# game.make_move('a4', 'c4')
+# game.make_move('i5', 'c5')
+# print(game.get_square_occupant('c1'))
+# print(game.get_active_player())
+# game.print_board()
