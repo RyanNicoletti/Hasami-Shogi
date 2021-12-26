@@ -30,7 +30,7 @@ class Hasamishogigame:
         self.selected = None
         self.board = Board()
         self.active_player = BLACK
-        self.opponent = RED if self.active_player == BLACK else BLACK
+        self.opponent = RED #if self.active_player == BLACK else BLACK
         self.valid_moves = {}
 
     def update(self):
@@ -57,6 +57,11 @@ class Hasamishogigame:
             self.active_player = RED
         else:
             self.active_player = BLACK
+        if self.opponent == RED:
+            self.opponent = BLACK
+        else:
+            self.opponent = RED
+
 
     def set_game_state(self, winner):
         """
@@ -176,31 +181,31 @@ class Hasamishogigame:
 
         opponent = self.opponent
 
-        if row < 8 and board[row + 1][col] == self.board.get_piece(row+1, col):
+        if row < 8 and board[row + 1][col] != 0 and self.board.get_piece(row+1, col).color == opponent:
             self.rec_check_captures(row + 1, col, 'down')
 
-        if row > 1 and board[row - 1][col] == self.board.get_piece(row-1, col):
+        if row > 1 and board[row - 1][col] != 0 and self.board.get_piece(row-1, col).color == opponent: #== self.board.get_piece(row-1, col):
             self.rec_check_captures(row - 1, col, 'up')
 
-        if col < 8 and board[row][col + 1] == self.board.get_piece(row, col+1):
+        if col < 8 and board[row][col + 1] != 0 and self.board.get_piece(row, col+1).color == opponent: #== self.board.get_piece(row, col+1):
             self.rec_check_captures(row, col + 1, 'right')
 
-        if col > 1 and board[row][col - 1] == self.board.get_piece(row, col-1):
+        if col > 1 and board[row][col - 1] != 0 and self.board.get_piece(row, col-1).color == opponent:
             self.rec_check_captures(row, col - 1, 'left')
 
-        if row == 1 and board[row - 1][col] == self.board.get_piece(row-1, col):
+        if row == 1 and board[row - 1][col] != 0 and self.board.get_piece(row-1, col).color == opponent:
             self.rec_check_captures(row - 1, col, 'right')
             self.rec_check_captures(row - 1, col, 'left')
 
-        if col == 7 and board[row][col + 1] == self.board.get_piece(row, col+1):
+        if col == 7 and board[row][col + 1] != 0 and self.board.get_piece(row, col+1).color == opponent:
             self.rec_check_captures(row, col + 1, 'down')
             self.rec_check_captures(row, col + 1, 'up')
 
-        if col == 1 and board[row][col - 1] == self.board.get_piece(row, col-1):
+        if col == 1 and board[row][col - 1] != 0 and self.board.get_piece(row, col-1).color == opponent:
             self.rec_check_captures(row, col - 1, 'down')
             self.rec_check_captures(row, col - 1, 'up')
 
-        if row == 7 and board[row + 1][col] == self.board.get_piece(row+1, col):
+        if row == 7 and board[row + 1][col] != 0 and self.board.get_piece(row+1, col).color == opponent:
             self.rec_check_captures(row - 1, col, 'right')
             self.rec_check_captures(row - 1, col, 'left')
         return
@@ -215,18 +220,17 @@ class Hasamishogigame:
         the enemy pawns.
         Otherwise return.
         """
-
         board = self.board.get_board()
         opponent = self.opponent
 
         if direction == 'down':
             # top right corner
-            if row == 0 and col == 8 and Piece(row+1, col, self.active_player): #board[row + 1][col] == player:
+            if row == 0 and col == 8 and self.board.get_piece(row+1, col).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # top left corner
-            if row == 0 and col == 0 and Piece(row+1, col, self.active_player): #board[row + 1][col] == player:
+            if row == 0 and col == 0 and self.board.get_piece(row+1, col).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
@@ -250,12 +254,12 @@ class Hasamishogigame:
 
         if direction == 'up':
             # bottom right corner
-            if row == 8 and col == 8 and Piece(row-1, col, self.active_player):
+            if row == 8 and col == 8 and self.board.get_piece(row-1, col).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # bottom left corner
-            if row == 8 and col == 0 and Piece(row-1, col, self.active_player):
+            if row == 8 and col == 0 and self.board.get_piece(row-1, col).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
@@ -279,17 +283,17 @@ class Hasamishogigame:
 
         if direction == 'right':
             # top left corner
-            if row == 0 and col == 0 and Piece(row, col+1, self.active_player):
+            if row == 0 and col == 0 and self.board.get_piece(row, col+1).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # bottom left corner
-            if row == 8 and col == 0 and Piece(row, col+1, self.active_player):
+            if row == 8 and col == 0 and self.board.get_piece(row, col+1).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
 
-            if col + 1 > 8 or board[row][col + 1] == 0:
+            if col + 1 > 8 or self.board.get_piece(row, col + 1) == 0:
                 return
 
             piece = self.board.get_piece(row, col+1)
@@ -308,12 +312,12 @@ class Hasamishogigame:
 
         if direction == 'left':
             # top right corner
-            if row == 0 and col == 8 and Piece(row, col-1, self.active_player):
+            if row == 0 and col == 8 and self.board.get_piece(row, col-1).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
             # bottom right corner
-            if row == 8 and col == 8 and Piece(row, col-1, self.active_player):
+            if row == 8 and col == 8 and self.board.get_piece(row, col-1).color == self.active_player:
                 board[row][col] = 0
                 self.inc_captured_pieces()
                 return
@@ -322,11 +326,11 @@ class Hasamishogigame:
                 return
 
             piece = self.board.get_piece(row, col - 1)
-            if piece.color == self.active_player: #board[row][col - 1] == player:
+            if piece.color == self.active_player:
                 remove_pieces = True
                 while remove_pieces:
                     piece = self.board.get_piece(row, col)
-                    if piece != 0 and piece.color == self.active_player: #board[row][col] == player:
+                    if piece != 0 and piece.color == self.active_player:
                         break
                     board[row][col] = 0
                     self.inc_captured_pieces()
@@ -334,11 +338,3 @@ class Hasamishogigame:
                 return
 
             return self.rec_check_captures(row, col - 1, 'left')
-
-# game = HasamiShogiGame()
-# game.make_move('i1', 'c1')
-# game.make_move('a4', 'c4')
-# game.make_move('i5', 'c5')
-# print(game.get_square_occupant('c1'))
-# print(game.get_active_player())
-# game.print_board()
