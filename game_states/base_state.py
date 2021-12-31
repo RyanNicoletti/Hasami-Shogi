@@ -9,6 +9,7 @@ class BaseState(object):
         self.screen_rect = pg.display.get_surface().get_rect()
         self.persist = {}
         self.font = pg.font.Font(None, 24)
+        self.winner = False
 
     def startup(self, persistent):
         self.persist = persistent

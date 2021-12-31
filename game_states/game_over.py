@@ -1,15 +1,14 @@
 import pygame as pg
 from .base_state import BaseState
 from .hasamishogigame import Hasamishogigame
-from constants import WHITE
+from constants import WHITE, BLACK, RED
 
 
 class GameOver(BaseState):
     def __init__(self):
         super(GameOver, self).__init__()
-        self.winner = winner
-        self.get_winner()
-        self.title = self.font.render(get_winner(), True, WHITE)
+        #self.get_winner()
+        self.title = self.font.render(f"{self.winner} wins!", True, WHITE)
         self.title_rect = self.title.get_rect(center=self.screen_rect.center)
         self.instructions = self.font.render("press space to start again, or enter to go to menu", True, WHITE)
         instructions_center = (self.screen_rect.center[0], self.screen_rect.center[1] + 50)

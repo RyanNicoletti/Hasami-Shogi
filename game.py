@@ -15,21 +15,8 @@ class GameRunner(object):
         self.state = self.states[self.state_name]
 
     def event_loop(self):
-
-        def get_row_col_from_mouse(pos):
-            x, y = pos
-            row = y // SQUARE_SIZE  # invert, SQUARE_SIZE = WIDTH//COLS, width=800, cols = 9
-            col = x // SQUARE_SIZE
-            return row, col
-
         for event in pg.event.get():
             self.state.get_event(event)
-            if event.type == pg.QUIT:
-                self.done = True
-            if event.type == pg.MOUSEBUTTONDOWN:
-                pos = pg.mouse.get_pos()
-                row, col = get_row_col_from_mouse(pos)
-                self.state.select_move(row, col)
 
     def change_state(self):
         current_state = self.state_name

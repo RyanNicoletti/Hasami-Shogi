@@ -23,7 +23,6 @@ class Hasamishogigame(BaseState):
         self.store_pos = []
         self.red_count = 0
         self.black_count = 0
-        self.winner = False
         self.next_state = "GAME_OVER"
 
     def _init(self):
@@ -33,10 +32,24 @@ class Hasamishogigame(BaseState):
         self.opponent = RED
         self.valid_moves = {}
 
-    def update(self, dt):
+    def draw(self, surface):
         self.board.draw(self.win)
         self.draw_valid_moves(self.valid_moves)
-        pg.display.update()
+
+    def get_event(self, event):
+        if event.type == pg.QUIT:
+            self.quit = True
+
+        def get_row_col_from_mouse(pos):
+            x, y = pos
+            row = y // SQUARE_SIZE  # invert, SQUARE_SIZE = WIDTH//COLS, width=800, cols = 9
+            col = x // SQUARE_SIZE
+            return row, col
+
+        if event.type == pg.MOUSEBUTTONDOWN:
+            pos = pg.mouse.get_pos()
+            row, col = get_row_col_from_mouse(pos)
+            self.select_move(row, col)
 
     def inc_captured_pieces(self):
         """
@@ -67,10 +80,10 @@ class Hasamishogigame(BaseState):
         checks for winner, if winner, update state
         """
         if self.opponent == RED and self.red_count >= 8:
-            self.winner = BLACK
+            self.winner = "Black"
             self.done = True
         elif self.opponent == BLACK and self.black_count >= 8:
-            self.winner = RED
+            self.winner = "Red"
             self.done = True
 
     def select_move(self, row, col):
