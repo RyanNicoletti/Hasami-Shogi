@@ -17,17 +17,20 @@ class Hasamishogigame(BaseState):
         Initializes current player as black and opposing player as red (black goes first).
         Initializes captured pieces (count) to 0 for both players
         """
+
         self._init()
         self.win = win
         self.store_pos = []
-        self._red_count = 0
-        self._black_count = 0
+        self.red_count = 0
+        self.black_count = 0
+        self.winner = False
+        self.next_state = "GAME_OVER"
 
     def _init(self):
         self.selected = None
         self.board = Board()
         self.active_player = BLACK
-        self.opponent = RED #if self.active_player == BLACK else BLACK
+        self.opponent = RED
         self.valid_moves = {}
 
     def update(self, dt):
@@ -40,9 +43,9 @@ class Hasamishogigame(BaseState):
         increases the number of the current opponents captured pieces by one
         """
         if self.opponent == RED:
-            self._red_count += 1
+            self.red_count += 1
         else:
-            self._black_count += 1
+            self.black_count += 1
 
     def change_turn(self):
         """
@@ -63,7 +66,12 @@ class Hasamishogigame(BaseState):
         """
         checks for winner, if winner, update state
         """
-        pass
+        if self.opponent == RED and self.red_count >= 8:
+            self.winner = BLACK
+            self.done = True
+        elif self.opponent == BLACK and self.black_count >= 8:
+            self.winner = RED
+            self.done = True
 
     def select_move(self, row, col):
         piece = self.board.get_piece(row, col)

@@ -1,7 +1,6 @@
 import pygame as pg
 from .base_state import BaseState
 from board import Board
-
 from constants import RED, WHITE, BLACK
 
 
