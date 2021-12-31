@@ -2,27 +2,24 @@ import pygame as pg
 from constants import RED, BLACK, BLUE, SQUARE_SIZE
 from board import Board
 from piece import Piece
+from .base_state import BaseState
 
 
-class Hasamishogigame:
+class Hasamishogigame(BaseState):
     """
     represents the board game hasami shogi
     """
 
     def __init__(self, win):
+        super(Hasamishogigame, self).__init__()
         """
         Creates a new instance of the hasami shogi game with a new board.
         Initializes current player as black and opposing player as red (black goes first).
         Initializes captured pieces (count) to 0 for both players
         """
         self._init()
-
         self.win = win
         self.store_pos = []
-        self._active_player = 'BLACK'
-        self._curr_player_turn = 'B'
-        self._opponent = 'R'
-        self._game_state = 'UNFINISHED'
         self._red_count = 0
         self._black_count = 0
 
@@ -33,7 +30,7 @@ class Hasamishogigame:
         self.opponent = RED #if self.active_player == BLACK else BLACK
         self.valid_moves = {}
 
-    def update(self):
+    def update(self, dt):
         self.board.draw(self.win)
         self.draw_valid_moves(self.valid_moves)
         pg.display.update()
@@ -62,20 +59,9 @@ class Hasamishogigame:
         else:
             self.opponent = RED
 
-
-    def set_game_state(self, winner):
-        """
-        TODO sets game state
-        """
-        pass
-    def get_game_state(self):
-        """TODO returns game state
-        """
-        pass
-
     def check_for_win(self):
         """
-        TODO checks for winner
+        checks for winner, if winner, update state
         """
         pass
 
@@ -116,20 +102,12 @@ class Hasamishogigame:
 
         board = self.board.get_board()
 
-        game_sate = self.get_game_state()
-
-        piece_to_move = self.board.get_piece(start_row_num, start_col_num)
-
         # if the end position is off the board, return False
         if end_row_num < 0 or end_row_num > 8 or end_col_num < 0 or end_col_num > 8:
             return False
 
         # check for only verticle and horizontal movement
         if end_row_num != start_row_num and end_col_num != start_col_num:
-            return False
-
-        # if game has been won return false
-        if game_sate == 'RED_WON' or game_sate == 'BLACK_WON':
             return False
 
         if start_row_num > end_row_num:
