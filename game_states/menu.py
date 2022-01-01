@@ -6,7 +6,7 @@ from constants import RED, WHITE, BLACK
 
 class Menu(BaseState):
     def __init__(self):
-        super(Menu, self).__init__()
+        super().__init__()
         self.active_index = 0
         self.options = ["Start Game", "Quit Game"]
         self.next_state = "GAMEPLAY"

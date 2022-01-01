@@ -2,7 +2,7 @@ import pygame as pg
 from constants import WIDTH, HEIGHT, SQUARE_SIZE
 
 
-class GameRunner(object):
+class GameRunner():
 
     # initialize a new game with a starting state (menu screen)
     def __init__(self, WIN, states, start_state):

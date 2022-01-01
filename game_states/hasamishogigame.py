@@ -11,7 +11,7 @@ class Hasamishogigame(BaseState):
     """
 
     def __init__(self, win):
-        super(Hasamishogigame, self).__init__()
+        super().__init__()
         """
         Creates a new instance of the hasami shogi game with a new board.
         Initializes current player as black and opposing player as red (black goes first).
@@ -68,11 +68,9 @@ class Hasamishogigame(BaseState):
         self.valid_moves = {}
         if self.active_player == BLACK:
             self.active_player = RED
-        else:
-            self.active_player = BLACK
-        if self.opponent == RED:
             self.opponent = BLACK
         else:
+            self.active_player = BLACK
             self.opponent = RED
 
     def check_for_win(self):
@@ -80,10 +78,10 @@ class Hasamishogigame(BaseState):
         checks for winner, if winner, update state
         """
         if self.opponent == RED and self.red_count >= 8:
-            self.winner = "Black"
+            self.persist["black_wins"] = True
             self.done = True
         elif self.opponent == BLACK and self.black_count >= 8:
-            self.winner = "Red"
+            self.persist["red_wins"] = True
             self.done = True
 
     def select_move(self, row, col):

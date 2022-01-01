@@ -5,7 +5,7 @@ from game_states.menu import Menu
 from game_states.game_over import GameOver
 from game import GameRunner
 
-pg.display.set_caption('Hasami Shogi')
+pg.display.set_caption('Hasami Shogi, Programmed by Ryan Nicoletti')
 
 pg.init()
 WIN = pg.display.set_mode((WIDTH, HEIGHT))
