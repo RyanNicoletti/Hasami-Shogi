@@ -7,7 +7,7 @@ from constants import WHITE, BLACK, RED
 class GameOver(BaseState):
     def __init__(self):
         super().__init__()
-        self.get_winner()
+        self.title = self.font.render("", True, WHITE)
         self.title_rect = self.title.get_rect(center=self.screen_rect.center)
         self.instructions = self.font.render("press space to start again, or enter to go to menu", True, WHITE)
         instructions_center = (self.screen_rect.center[0], self.screen_rect.center[1] + 50)
@@ -16,9 +16,9 @@ class GameOver(BaseState):
     def get_winner(self):
         self.title = self.font.render("Red wins!", True, WHITE) if self.persist['blackcaps'] >= 8 else self.font.render(
             "Black wins!", True, WHITE)
+        self.title_rect = self.title.get_rect(center=self.screen_rect.center)
 
     def get_event(self, event):
-        #self.title = self.font.render("Red wins!", True, WHITE) if self.persist['blackcaps'] >= 8 else self.font.render("Black wins!", True, WHITE)
         if event.type == pg.QUIT:
             self.quit = True
         elif event.type == pg.KEYUP:
