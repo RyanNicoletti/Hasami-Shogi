@@ -57,8 +57,10 @@ class Hasamishogigame(BaseState):
         """
         if self.opponent == RED:
             self.red_count += 1
+            self.persist['redcaps'] += 1
         else:
             self.black_count += 1
+            self.persist['blackcaps'] += 1
 
     def change_turn(self):
         """
@@ -78,10 +80,8 @@ class Hasamishogigame(BaseState):
         checks for winner, if winner, update state
         """
         if self.opponent == RED and self.red_count >= 8:
-            self.persist["black_wins"] = True
             self.done = True
         elif self.opponent == BLACK and self.black_count >= 8:
-            self.persist["red_wins"] = True
             self.done = True
 
     def select_move(self, row, col):

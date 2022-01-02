@@ -7,14 +7,18 @@ from constants import WHITE, BLACK, RED
 class GameOver(BaseState):
     def __init__(self):
         super().__init__()
-        self.title = self.font.render(f"{winner} wins!", True, WHITE) if self.persist["red_wins"] is True else self.font.render("Black wins!", True, WHITE)
+        self.get_winner()
         self.title_rect = self.title.get_rect(center=self.screen_rect.center)
         self.instructions = self.font.render("press space to start again, or enter to go to menu", True, WHITE)
         instructions_center = (self.screen_rect.center[0], self.screen_rect.center[1] + 50)
         self.instructions_rect = self.instructions.get_rect(center=instructions_center)
 
-    def get_event(self, event):
+    def get_winner(self):
+        self.title = self.font.render("Red wins!", True, WHITE) if self.persist['blackcaps'] >= 8 else self.font.render(
+            "Black wins!", True, WHITE)
 
+    def get_event(self, event):
+        #self.title = self.font.render("Red wins!", True, WHITE) if self.persist['blackcaps'] >= 8 else self.font.render("Black wins!", True, WHITE)
         if event.type == pg.QUIT:
             self.quit = True
         elif event.type == pg.KEYUP:
@@ -24,7 +28,7 @@ class GameOver(BaseState):
             elif event.key == pg.K_SPACE:
                 self.next_state = "GAMEPLAY"
                 self.done = True
-            elif event.key == pygame.K_ESCAPE:
+            elif event.key == pg.K_ESCAPE:
                 self.quit = True
 
     def draw(self, surface):
