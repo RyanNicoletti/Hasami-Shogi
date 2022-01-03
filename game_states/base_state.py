@@ -7,7 +7,7 @@ class BaseState():
         self.quit = False
         self.next_state = None
         self.screen_rect = pg.display.get_surface().get_rect()
-        self.persist = {"red_wins": False, "black_wins": False, 'redcaps': 0, 'blackcaps': 0}
+        self.persist = {'redcaps': 0, 'blackcaps': 0}
         self.font = pg.font.Font(None, 24)
 
     def startup(self, persistent):

@@ -31,7 +31,6 @@ class GameRunner():
         if self.state == self.states["GAME_OVER"]:
             self.states["GAME_OVER"].get_winner()
 
-
     def update(self, dt):
         if self.state.quit:
             self.done = True
